@@ -1,23 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import './styles/app.css';
+
+import ProductList from './products/productList';
+import Cart from './products/cart';
+import Checkout from './products/checkout';
 
 function App() {
+  const [cartItems, setCartItems] = useState([]);
+  const [view, setView] = useState('products'); // 'products', 'cart', 'checkout'
+
+  const addToCart = (product) => {
+    setCartItems([...cartItems, product]);
+  };
+
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <div className="app-container">
+      <header>
+        <h1>Nisses Brödbutik</h1>
+        <nav>
+          <button onClick={() => setView('products')}>Produkter</button>
+          <button onClick={() => setView('cart')}>Kundvagn ({cartItems.length})</button>
+        </nav>
       </header>
+
+      {view === 'products' && <ProductList addToCart={addToCart} />}
+      {view === 'cart' && (
+        <Cart
+          items={cartItems}
+          goToCheckout={() => setView('checkout')}
+        />
+      )}
+      {view === 'checkout' && (
+        <Checkout
+          items={cartItems}
+          onBack={() => setView('cart')}
+          onComplete={() => {
+            clearCart();
+            setView('products');
+          }}
+        />
+      )}
     </div>
   );
 }
