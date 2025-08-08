@@ -1,14 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
 body {
-  font-family: Arial, sans-serif;
   margin: 0;
-  padding: 0;
-  background-color: #fdf6e3;
+  font-family: 'Inter', sans-serif;
+  background-color: #ffffff;
+  color: #222;
+  line-height: 1.6;
 }
 
 .app-container {
-  padding: 2rem;
-  max-width: 1000px;
+  max-width: 960px;
   margin: 0 auto;
+  padding: 3rem 1.5rem;
 }
 
 header {
@@ -16,21 +19,78 @@ header {
   margin-bottom: 2rem;
 }
 
-h1 {
-  font-size: 2rem;
-  color: #333;
+header h1 {
+  font-size: 2.8rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-top: 1rem;
 }
 
 button {
-  padding: 0.5rem 1rem;
-  margin-top: 0.5rem;
-  background-color: #fbbd08;
+  background-color: #111;
+  color: #fff;
   border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  font-size: 1rem;
   cursor: pointer;
-  font-weight: bold;
+  transition: background 0.25s ease;
 }
 
 button:hover {
-  background-color: #f2711c;
-  color: white;
+  background-color: #444;
+}
+
+/* Product List */
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 2rem;
+}
+
+/* Product Card */
+.product-card {
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: border-color 0.2s ease;
+}
+
+.product-card:hover {
+  border-color: #999;
+}
+
+.product-card h2 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 0 0 0.5rem 0;
+}
+
+.product-card p {
+  font-size: 0.95rem;
+  margin: 0.3rem 0;
+}
+
+.product-card button {
+  margin-top: 1rem;
+  background-color: #2b6cb0;
+  font-size: 0.9rem;
+}
+
+.product-card button:hover {
+  background-color: #1e4e8c;
+}
+
+/* Cart & Checkout */
+.cart,
+.checkout {
+  border-top: 1px solid #ddd;
+  margin-top: 2rem;
+  padding-top: 2rem;
 }
