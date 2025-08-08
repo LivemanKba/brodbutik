@@ -4,10 +4,11 @@ import './styles/app.css';
 import ProductList from './products/productList';
 import Cart from './products/cart';
 import Checkout from './products/checkout';
+import ThankYou from './products/thankyou';
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
-  const [view, setView] = useState('products'); // 'products', 'cart', 'checkout'
+  const [view, setView] = useState('products'); // 'products', 'cart', 'checkout', 'thankyou'
 
   const addToCart = (product) => {
     setCartItems([...cartItems, product]);
@@ -40,12 +41,14 @@ function App() {
           onBack={() => setView('cart')}
           onComplete={() => {
             clearCart();
-            setView('products');
+            setView('thankyou');
           }}
         />
       )}
+      {view === 'thankyou' && <ThankYou />}
     </div>
   );
 }
 
 export default App;
+

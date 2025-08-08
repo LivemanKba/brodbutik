@@ -13,3 +13,4 @@ const ProductList = ({ addToCart }) => {
 };
 
 export default ProductList;
+
