@@ -23,11 +23,17 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
+      - name: Clean previous build (cache-busting)
+        run: rm -rf build
+
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
-        run: npm run build
+      - name: Build (production)
+        run: |
+          npm run build
+          # touch a cache-busting marker so index.html changes are always fresh
+          echo "built_at=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" > build/build-info.txt
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
