@@ -1,0 +1,22 @@
+{
+  "name": "brodbutik-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@azure/functions": "^4.4.0",
+    "@prisma/client": "^5.17.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.17.0"
+  },
+  "scripts": {
+    "dev": "func start --javascript",
+    "postinstall": "prisma generate",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy"
+  }
+}

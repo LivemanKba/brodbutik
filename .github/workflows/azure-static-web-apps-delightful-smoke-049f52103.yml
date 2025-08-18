@@ -10,37 +10,72 @@ on:
       - main
 
 jobs:
-  build_and_deploy_job:
+  build_and_deploy:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
+
+    env:
+      # Use production Prisma schema for deploy (PostgreSQL)
+      PRISMA_SCHEMA_PATH: api/prisma/schema.prod.prisma
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Install API deps and prepare Prisma for production deploy
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          submodules: true
-          lfs: false
-      - name: Build And Deploy
+          node-version: '18'
+
+      - name: Install API dependencies
+        working-directory: ./api
+        run: npm ci
+
+      - name: Generate Prisma Client (prod schema)
+        working-directory: ./api
+        env:
+          PRISMA_SCHEMA_PATH: ${{ env.PRISMA_SCHEMA_PATH }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npx prisma generate
+
+      - name: Run Prisma Migrate Deploy (prod)
+        working-directory: ./api
+        env:
+          PRISMA_SCHEMA_PATH: ${{ env.PRISMA_SCHEMA_PATH }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npx prisma migrate deploy
+
+      # Build frontend (CRA) - SWA action can build automatically, but we pre-build explicitly
+      - name: Install Frontend dependencies
+        run: npm ci
+
+      - name: Build Frontend
+        run: npm run build
+
+      - name: Build and Deploy SWA
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_DELIGHTFUL_SMOKE_049F52103 }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/" # App source code path
-          api_location: "" # Api source code path - optional
-          output_location: "build" # Built app content directory - optional
-          ###### End of Repository/Build Configurations ######
+          app_location: "/"
+          api_location: "api"
+          output_location: "build"
+        env:
+          # Make DATABASE_URL available to the SWA deploy step if needed by Functions build
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          PRISMA_SCHEMA_PATH: ${{ env.PRISMA_SCHEMA_PATH }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
-    name: Close Pull Request Job
     steps:
       - name: Close Pull Request
-        id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_DELIGHTFUL_SMOKE_049F52103 }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           action: "close"
+          app_location: "/"
+          api_location: "api"

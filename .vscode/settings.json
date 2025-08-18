@@ -3,5 +3,7 @@
         "node_modules{,/**}",
         ".vscode{,/**}"
     ],
-    "appService.showBuildDuringDeployPrompt": false
+    "appService.showBuildDuringDeployPrompt": false,
+    "appService.defaultWebAppToDeploy": "/subscriptions/9996251c-dd43-4560-b44f-33c22ac59d90/resourceGroups/brodbutiken-rg/providers/Microsoft.Web/sites/brodbutiken-webapp",
+    "appService.deploySubpath": "build"
 }
