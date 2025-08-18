@@ -35,16 +35,18 @@ jobs:
       - name: Generate Prisma Client (prod schema)
         working-directory: ./api
         env:
+          # Force Prisma to use the production schema file
           PRISMA_SCHEMA_PATH: ${{ env.PRISMA_SCHEMA_PATH }}
+          # IMPORTANT: Provide DATABASE_URL from SWA app settings secret in GitHub
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: npx prisma generate
+        run: npx prisma generate --schema $PRISMA_SCHEMA_PATH
 
       - name: Run Prisma Migrate Deploy (prod)
         working-directory: ./api
         env:
           PRISMA_SCHEMA_PATH: ${{ env.PRISMA_SCHEMA_PATH }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: npx prisma migrate deploy
+        run: npx prisma migrate deploy --schema $PRISMA_SCHEMA_PATH
 
       # Build frontend (CRA) - SWA action can build automatically, but we pre-build explicitly
       - name: Install Frontend dependencies
