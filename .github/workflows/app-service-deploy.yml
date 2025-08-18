@@ -62,6 +62,29 @@ jobs:
       - name: Deploy build/ to App Service
         uses: azure/webapps-deploy@v2
         with:
-          app-name: brodbutiken-webapp # TODO: confirm this matches your App Service Name exactly
+          app-name: brodbutiken-webapp
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: ./build
+
+      - name: Verify deployed HTML contains expected title
+        run: |
+          set -e
+          URL="https://brodbutiken-webapp.swe dencentral-01.azurewebsites.net"
+          # fix potential space in region string just in case
+          URL="${URL// /}"
+          echo "Fetching $URL ..."
+          # retry a few times to tolerate cold start
+          for i in 1 2 3 4 5; do
+            HTTP_CODE=$(curl -s -o /tmp/index.html -w "%{http_code}" "$URL" || true)
+            if [ "$HTTP_CODE" = "200" ]; then
+              break
+            fi
+            echo "Attempt $i: HTTP $HTTP_CODE, waiting 5s..."
+            sleep 5
+          done
+          if ! grep -q "<title>Nisses Bakery</title>" /tmp/index.html; then
+            echo "Deployed index.html does not contain expected title. Dumping first lines:"
+            head -n 40 /tmp/index.html || true
+            exit 1
+          fi
+          echo "Verification passed: found expected title."
