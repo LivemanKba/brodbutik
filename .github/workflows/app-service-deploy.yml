@@ -69,22 +69,25 @@ jobs:
       - name: Verify deployed HTML contains expected title
         run: |
           set -e
-          URL="https://brodbutiken-webapp.swe dencentral-01.azurewebsites.net"
-          # fix potential space in region string just in case
-          URL="${URL// /}"
+          # Correct default domain (no region segment in hostname)
+          URL="https://brodbutiken-webapp.azurewebsites.net"
           echo "Fetching $URL ..."
           # retry a few times to tolerate cold start
           for i in 1 2 3 4 5; do
-            HTTP_CODE=$(curl -s -o /tmp/index.html -w "%{http_code}" "$URL" || true)
+            HTTP_CODE=$(curl -sS -o /tmp/index.html -w "%{http_code}" "$URL" || true)
             if [ "$HTTP_CODE" = "200" ]; then
               break
             fi
             echo "Attempt $i: HTTP $HTTP_CODE, waiting 5s..."
             sleep 5
           done
+          if [ ! -f /tmp/index.html ]; then
+            echo "No index.html downloaded — service may still be starting or URL is wrong."
+            exit 1
+          fi
           if ! grep -q "<title>Nisses Bakery</title>" /tmp/index.html; then
             echo "Deployed index.html does not contain expected title. Dumping first lines:"
-            head -n 40 /tmp/index.html || true
+            head -n 60 /tmp/index.html || true
             exit 1
           fi
           echo "Verification passed: found expected title."
