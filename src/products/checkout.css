@@ -1,0 +1,130 @@
+/* Checkout page-specific layout using shared tokens from src/styles/app.css */
+.checkout-container {
+  max-width: 1000px;
+  margin: var(--space-4) auto 0 auto;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: none;
+}
+
+.checkout-title {
+  text-align: center;
+  margin-bottom: var(--space-8);
+  margin-top: var(--space-2);
+}
+
+.checkout-content {
+  display: flex;
+  gap: var(--space-8);
+  align-items: flex-start;
+  width: 100%;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.checkout-form, .checkout-summary {
+  flex: 1;
+  min-width: 280px;
+}
+
+.checkout-form {
+  background: #f3f7fa; /* subtle blue tone */
+  border: 1px solid #eee;
+  padding: var(--space-8) var(--space-6);
+  border-radius: var(--radius-md);
+  position: relative;
+  box-sizing: border-box;
+}
+
+.checkout-form input {
+  display: block;
+  width: 100%;
+  margin-bottom: var(--space-4);
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+}
+
+.checkout-summary {
+  background: #f7f5fa; /* subtle violet tone */
+  padding: var(--space-6);
+  border-radius: var(--radius-md);
+}
+
+.checkout-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.checkout-total-line {
+  border-top: 1px solid #ccc;
+  margin: var(--space-4) 0;
+}
+
+.checkout-total-values {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.checkout-submit {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+}
+
+.checkout-submit button {
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: #fff;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.checkout-submit button:hover {
+  background: var(--color-primary-700);
+}
+
+.checkout-submit button[type="button"] {
+  background: #aaa;
+}
+
+.checkout-section-title {
+  margin-top: 0;
+  margin-bottom: var(--space-6);
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 1.2;
+  min-height: 2.5rem;
+  display: flex;
+  align-items: flex-start;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .checkout-content {
+    gap: var(--space-6);
+  }
+}
+
+@media (max-width: 600px) {
+  .checkout-container {
+    margin-top: var(--space-2);
+  }
+  .checkout-content {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .checkout-submit {
+    flex-direction: column;
+    gap: var(--space-3);
+    align-items: stretch;
+  }
+}

@@ -1,265 +1,946 @@
-/* ========== BASSTILAR ========== */
+/* High-priority color tokens (must be first) */
+
+/* Global root/viewport enforcement to kill any edge bands or gradients */
+html, body {
+  min-height: 100%;
+  height: 100%;
+  background: #FFF6E6 !important;
+  color: #1E3A5F !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+html::before, html::after, body::before, body::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Fixed paint layer behind everything as a last-resort guarantee */
+.page-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: #FFF6E6 !important;
+  pointer-events: none;
+}
+
+/* Header and hero text enforcement */
+header, header *, .simple-nav, .simple-nav * {
+  color: #1E3A5F !important;
+  background: transparent !important;
+}
+.hero-wordmark, .hero-subword { color: #1E3A5F !important; }
+
+/* High-priority color tokens (must be first) */
+:root {
+  /* Simple, spacious, product-first theme */
+  /* Palette (light) */
+  --color-bg: #FFF6E6;            /* enforce cream base */
+  /* Remove indirection; we now use a resolvable relative path */
+  --color-surface: #ffffff;
+  --color-text: #1E3A5F;          /* enforce brand navy text */
+  --color-muted: #6c7b8a;
+  --color-primary: #2563ff;       /* keep prototype primary for CTAs */
+  --color-primary-600: #1e4fe0;
+  --color-primary-700: #193fcc;
+
+  /* Elevation and borders */
+  --border: 1px solid rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+  /* Spacing and radii */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  /* Type */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* Include both common names from CDN: */
+  --font-display: 'ChunkFive', 'ChunkFive Regular', 'Alfa Slab One', serif;
+  --h1: clamp(2.2rem, 4vw + 1rem, 4.2rem);
+  --lead: clamp(1.05rem, 0.6vw + 0.9rem, 1.25rem);
+
+  /* Breakpoints */
+  --bp-lg: 1200px;
+  --bp-md: 900px;
+  --bp-sm: 600px;
+  --bp-xs: 420px;
+
+  /* Spacing scale (fluid-ready) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  /* Radii and shadows */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --shadow-sm: 0 6px 16px rgba(0, 0, 0, 0.28);
+  --shadow-md: 0 18px 50px rgba(0, 0, 0, 0.42);
+
+  /* Typography sizes */
+  --font-size-hero: clamp(2rem, 2.8vw + 1.2rem, 3rem);
+  --font-size-h2: clamp(1.25rem, 1.2vw + 0.9rem, 1.75rem);
+  --font-size-body: clamp(1rem, 0.4vw + 0.9rem, 1.1rem);
+
+  /* Breakpoints duplicate keep */
+  --bp-lg: 1200px;
+  --bp-md: 900px;
+  --bp-sm: 600px;
+  --bp-xs: 420px;
+}
+
+/* Optional light mode override */
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-bg: #f6f8fb;
+    --color-surface: #ffffff;
+    --color-elev-2: #f3f6fb;
+    --color-text: #0b1220;
+    --color-muted: #5a6b7c;
+    --color-primary: #1a5bff;
+    --color-primary-600: #1449db;
+    --color-primary-700: #103dc2;
+    --color-accent: #7ddb00;
+    --color-accent-600: #69bf00;
+    --color-accent-700: #58a300;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: 1px solid rgba(11, 18, 32, 0.06);
+    --glass-shadow: 0 10px 36px rgba(18, 28, 45, 0.12);
+    --grad-hero: radial-gradient(1200px 800px at 80% -10%, rgba(125,219,0,0.16), transparent 60%),
+                 radial-gradient(1000px 800px at -20% -20%, rgba(26,91,255,0.18), transparent 60%);
+  }
+}
+
+/* Base reset and accessibility */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  min-height: 100%;
+  height: 100%;
+}
 
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background-color: #f5f5f5;
-  color: #333;
+  font-family: var(--font-sans);
+  background-color: var(--color-bg) !important; /* #FFF6E6 */
+  color: var(--color-text) !important;          /* #1E3A5F */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:focus-visible {
+  outline: 3px solid #6366f1;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .accent-animated { background-size: 100% 100% !important; }
 }
 
 .app-container {
+  /* Let hero span full width without the boxed card look */
+  max-width: min(1200px, 100%);
+  margin: 0 auto;
+  padding: var(--space-6);
+}
+
+/* Topbar / Navigation */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-bg);
+  border-bottom: none;
+}
+
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.1rem, 3vw, 2.2rem);
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: var(--space-3) var(--space-5); /* slightly tighter top/bottom and sides */
 }
 
-header {
-  display: flex;
-  flex-direction: column;
+/* Safety: remove any global shadows/radii from generic elements that could leak */
+.brand {
+  display: inline-flex;
   align-items: center;
-  margin-bottom: 2rem;
+  gap: var(--space-3);
+  text-decoration: none;
+  color: inherit;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: 0 !important;
 }
 
-header h1 {
-  margin: 0;
-  font-size: 2rem;
+.brand-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  filter: saturate(85%);
+  opacity: 0.9;
 }
 
-nav {
-  margin-top: 1rem;
+.brand-name {
+  font-family: var(--font-display, 'ChunkFive', 'ChunkFive Regular', serif) !important;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #1E3A5F !important; /* brand navy */
+  font-size: clamp(1.1rem, 0.8vw + 1rem, 1.4rem);
 }
 
-nav button {
-  margin: 0 0.5rem;
-  padding: 0.5rem 1rem;
-  background-color: #222;
-  color: white;
-  border: none;
-  border-radius: 5px;
+/* Simple top nav */
+.simple-nav {
+  display: flex;
+  gap: clamp(1.5rem, 5vw, 3rem);
+}
+.nav-link {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: #1E3A5F !important; /* force exact brand navy */
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+  cursor: pointer;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-link:hover { color: var(--color-primary); }
+.nav-link:focus-visible {
+  outline: 3px solid rgba(23,78,136,0.25);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+/* Cart badge – compact size, positioned nearer the "KASSA" corner */
+.cart-link {
+  position: relative;          /* anchor for absolute-positioned badge */
+  padding-right: 0.35rem;      /* keep slight breathing room */
+}
+
+.cart-badge {
+  position: absolute;                 /* tuck badge near the word "KASSA" */
+  top: -6px;                          /* refined alignment */
+  right: -12px;                       /* refined alignment */
+  min-width: 16px;                    /* smaller circumference */
+  height: 16px;
+  padding: 0 4px;                     /* proportional padding */
+  border-radius: 999px;
+  background: #ffc107;                /* amber background for high contrast on cream */
+  color: #1E3A5F !important;          /* brand navy text for readability */
+  font-size: 10px;                    /* proportionally smaller number */
+  font-weight: 900;
+  display: inline-grid;
+  place-items: center;
+  line-height: 1;
+  transform-origin: center;
+  box-shadow: 0 0 0 2px #1E3A5F;      /* keep previous ring thickness, just around smaller badge */
+  transition: transform 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease, top 160ms ease, right 160ms ease;
+}
+
+.cart-badge.bump {
+  animation: cart-bump 520ms ease;
+}
+
+@keyframes cart-bump {
+  0% { transform: scale(1); }
+  20% { transform: scale(1.18); }
+  60% { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+
+/* High contrast when count is zero vs non-zero (optional but clearer) */
+.cart-badge:not(:empty) {
+  background: #ffb300; /* darker amber when there is content */
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1E3A5F;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 999px;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.22);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 50;
+  font-weight: 600;
+}
+
+.toast-undo {
+  appearance: none;
+  border: 0;
+  background: #ffffff;
+  color: #1E3A5F;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 800;
   cursor: pointer;
 }
 
-nav button:hover {
-  background-color: #444;
+.toast-undo:hover {
+  filter: brightness(0.96);
 }
 
-/* ========== PRODUKTLISTA ========== */
+/* Removed dropdown/menu legacy styles */
 
-.product-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+/* Big, simple CTA/button variants for prototype */
+.btn-lg { padding: 0.9rem 1.4rem; font-size: 1.1rem; border-radius: 999px; }
+/* Reduce top padding on the first screen to bring image closer to the top menu */
+.screen { max-width: 900px; margin: 0 auto; padding: var(--space-6) var(--space-6); }
+.screen-center { display: grid; place-items: center; gap: var(--space-5); min-height: 56vh; }
+.btn-back { border-radius: 999px; }
+.big-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-6); margin-top: var(--space-6); }
+.action-tile {
+  display: grid; place-items: center;
+  padding: 2.5rem 1rem;
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  font-weight: 700;
+  color: var(--color-text);
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+.action-tile:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); border-color: rgba(23,78,136,0.14); }
+.action-tile:active { transform: translateY(0); }
+
+/* (unused menu trigger/dropdown styles removed) */
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
+  gap: var(--space-2);
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease, color 120ms ease;
+  will-change: transform;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: none;
+  border-radius: 999px;
+  padding: 0.8rem 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+.btn-outline {
+  background: transparent;
+  border-color: rgba(30,58,95,0.25);
+  color: var(--color-text);
+}
+.btn-outline:hover { background: rgba(23,78,136,0.06); }
+
+.btn-primary:hover { background: var(--color-primary-600); }
+.btn-primary:active { background: var(--color-primary-700); }
+
+.btn-accent {
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), transparent),
+              var(--color-accent);
+  color: #0b0f14;
+  box-shadow: 0 10px 26px rgba(163, 255, 18, 0.36);
+}
+
+.btn-accent:hover { background: var(--color-accent-600); }
+.btn-accent:active { background: var(--color-accent-700); }
+
+.btn-outline {
+  background: transparent;
+  border-color: rgba(31, 45, 61, 0.22);
+  color: var(--color-text);
+}
+
+.btn-outline:hover {
+  background: rgba(31, 45, 61, 0.06);
+}
+
+/* Cards / Surfaces */
+/* Ensure generic card styles do not affect hero by scoping them to .card only */
+.card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 60%),
+              var(--color-surface);
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-6);
+}
+
+.surface {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+/* =======================
+   Products page (matches home style)
+   ======================= */
+
+.products-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-6);
+}
+
+.products-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.products-title {
+  margin: 0;
+  font-size: clamp(1.4rem, 1.6vw + 1rem, 2rem);
+  font-family: var(--font-display, 'ChunkFive', 'ChunkFive Regular', serif);
+  letter-spacing: 0.02em;
+  color: #1E3A5F;
+}
+
+.products-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.products-sort {
+  min-width: 180px;
+}
+
+/* Grid: mobile-first, then enhance */
+.products-grid-modern {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* prefer 2 cols on mobile when space allows */
+  gap: var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Small phones may collapse to 1 column naturally; enforce at very narrow widths */
+@media (max-width: 420px) {
+  .products-grid-modern {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tablet range: prefer 3 columns when possible, fallback to 2 on tighter widths */
+@media (min-width: 768px) {
+  .products-grid-modern {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Desktop: 4 columns at ≥1200px */
+@media (min-width: 1200px) {
+  .products-grid-modern {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Product card (no image), consistent with home surfaces */
+.product-card-modern {
+  background: var(--color-surface);
+  border: 1px solid rgba(31, 45, 61, 0.08);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+
+.product-card-modern:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+  border-color: rgba(23,78,136,0.14);
+}
+
+/* Card body */
+.product-card-modern .card-body {
+  padding: var(--space-5);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.card-title-modern {
+  margin: 0;
+  font-size: clamp(1.05rem, 0.5vw + 1rem, 1.3rem);
+  font-weight: 800;
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+
+/* Description with 2-line clamp */
+.card-desc {
+  color: var(--color-muted);
+  line-height: 1.5;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;      /* Safari */
+  -webkit-box-orient: vertical;
+}
+
+.clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Footer with price and CTA */
+.card-footer-modern {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(180deg, rgba(26,91,255,0.06), transparent 60%);
+}
+
+/* Button success flash for "Köp" */
+.btn-success-flash {
+  background: #16a34a !important;
+  color: #fff !important;
+}
+
+.price-wrap {
+  display: grid;
+  gap: 2px;
+  align-items: start;
+}
+
+.price {
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  color: var(--color-text);
+}
+
+.vat {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+/* Buttons already styled globally (.btn, .btn-primary, .btn-outline)
+   Ensure accessible focus and disabled states */
+.btn[disabled],
+.btn[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Screen reader only helper */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Actions footer (pagination / load more) */
+.products-actions {
+  display: grid;
+  place-items: center;
+  margin-top: var(--space-8);
+}
+
+/* Product list / grid */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+@media (max-width: 1024px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .product-card {
-  background-color: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-  width: 220px;
-  text-align: center;
-}
-
-.product-card h2 {
-  margin-top: 0;
-  font-size: 1.2rem;
-}
-
-.product-card p {
-  font-size: 0.95rem;
-  color: #555;
-}
-
-.product-card button {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  background-color: #222;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.product-card button:hover {
-  background-color: #444;
-}
-
-/* ========== KUNDVAGN ========== */
-
-.cart-container {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.cart-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.8rem 0;
-  border-bottom: 1px solid #ccc;
-}
-
-.cart-item-name {
-  font-weight: 500;
-}
-
-.cart-item-price {
-  color: #666;
-}
-
-.cart-total {
-  font-weight: bold;
-  margin-top: 1.5rem;
-  text-align: right;
-  font-size: 1.1rem;
-}
-
-.cart-buttons {
-  margin-top: 2rem;
-  display: flex;
-  justify-content: space-between;
-}
-
-.cart-buttons button {
-  padding: 0.7rem 1.5rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.cart-buttons button:first-child {
-  background-color: #ddd;
-  color: #333;
-}
-
-.cart-buttons button:last-child {
-  background-color: #222;
-  color: white;
-}
-
-.cart-buttons button:last-child:hover {
-  background-color: #444;
-}
-
-/* ========== TACKSIDA ========== */
-
-.thank-you-container {
-  text-align: center;
-  padding: 4rem 1rem;
-}
-
-.thank-you-container h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-}
-
-.thank-you-container p {
-  font-size: 1.1rem;
-  color: #666;
-}
-
-/* ============================= */
-/*           CHECKOUT           */
-/* ============================= */
-
-.checkout-container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-family: 'Inter', sans-serif;
-}
-
-.checkout-title {
-  text-align: center;
-  font-size: 2.2rem;
-  font-weight: 600;
-  margin-bottom: 2rem;
-}
-
-.checkout-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.checkout-form {
-  flex: 1;
-  min-width: 300px;
-}
-
-.checkout-form h3 {
-  margin-bottom: 0.5rem;
-  font-size: 1.2rem;
-  font-weight: 500;
-}
-
-.checkout-form input {
-  width: 100%;
-  padding: 0.8rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-}
-
-.checkout-summary {
-  flex: 1;
-  min-width: 300px;
-  background-color: #f9f9f9;
-  padding: 1.5rem;
-  border-radius: 6px;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
-}
-
-.checkout-summary h3 {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-  font-weight: 500;
-}
-
-.checkout-items {
+  background: var(--color-surface);
+  border: 1px solid rgba(31, 45, 61, 0.08);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
 }
 
-.checkout-item {
-  display: flex;
-  justify-content: space-between;
-  font-size: 1rem;
-  padding-bottom: 0.3rem;
+.product-card .card-body {
+  padding: var(--space-5);
+  display: grid;
+  gap: var(--space-3);
 }
 
-.checkout-total {
+.product-card .card-title {
+  font-size: clamp(1.05rem, 0.5vw + 1rem, 1.3rem);
+  font-weight: 700;
+}
+
+.product-card .card-desc {
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.product-card .card-footer {
+  margin-top: auto;
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(180deg, rgba(26,91,255,0.06), transparent 60%);
+}
+
+/* Cart styles */
+.cart {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.cart .cart-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(31, 45, 61, 0.08);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.cart .cart-item .title {
   font-weight: 600;
-  font-size: 1.1rem;
-  padding-top: 1.5rem;
-  margin-top: 1rem;
-  border-top: 2px solid #ccc;
 }
 
-.checkout-submit {
+.cart .cart-item .price {
+  font-weight: 700;
+}
+
+.cart .cart-summary {
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(31, 45, 61, 0.1);
+  background: linear-gradient(180deg, rgba(255,255,255,0.7), #fff);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Enforce background/text on root containers per directive */
+#root,
+.app-container {
+  background: #FFF6E6 !important;
+  color: #1E3A5F !important;
+}
+
+/* Ensure all h1 in home use display font as a catch-all */
+.home h1,
+header .brand,
+header .brand .brand-name {
+  font-family: var(--font-display, 'ChunkFive', 'ChunkFive Regular', serif) !important;
+  color: #1E3A5F !important;
+}
+
+/* Footer/edge bands sometimes come from body/html or a footer element;
+   normalize all structural containers to cream */
+html, body, main, header, footer, section {
+  background: transparent !important;
+  color: inherit !important;
+}
+footer, .site-footer {
+  background: #FFF6E6 !important;
+  color: #1E3A5F !important;
+}
+
+/* Also ensure the main container areas do not override background */
+main, header, section {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+/* Hard fallback on root containers to ensure theme applies regardless of cascade */
+#root,
+.app-container {
+  background: #FFF6E6 !important;
+  color: #1E3A5F !important;
+}
+
+/* Checkout */
+.checkout-container {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.checkout-panel {
+  background: var(--color-surface);
+  border: 1px solid rgba(31,45,61,0.08);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-6);
+}
+
+.checkout-panel h2 {
+  margin-top: 0;
+  font-size: clamp(1.1rem, 0.7vw + 1rem, 1.4rem);
+}
+
+/* Forms */
+.input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(31, 45, 61, 0.22);
+  background: #fff;
+  color: var(--color-text);
+}
+
+.input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(31, 45, 61, 0.12);
+}
+
+.label {
+  display: inline-block;
+  margin-bottom: var(--space-2);
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+/* Home hero */
+.home-hero-modern {
+  position: relative;
+  border-radius: var(--radius-lg);
+  padding: clamp(1.6rem, 4vw, 4.2rem); /* tighten hero block padding */
+  /* Add centered, subtle background logo with high transparency.
+     Using multiple backgrounds keeps existing gradients for depth. */
+  /* Robust public-path strategy:
+     - For CRA/Vite, public assets are served from root at runtime: /nisse2.png
+     - css-loader attempts to resolve relative imports at build; using absolute url() can cause resolution errors during build.
+     - Use CSS variable indirection and assign it at runtime on :root via JS (index.js) to avoid css-loader resolving it.
+  */
+  /* HARD RESET: remove any card feel; blend with page background */
+  /* HOME: no overlay/transparency; show full-quality centered image once
+     IMPORTANT: Remove any background image entirely on home to avoid duplicate logo */
+  background: #FFF6E6 !important; /* exact page cream, NO image */
+  border: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+/* HOME: ensure no overlay and no background image on hero */
+.home-hero-modern::after {
+  content: none !important;
+}
+
+/* If you want slightly more logo visibility while keeping contrast, reduce alpha to 0.88–0.92 */
+
+/* Show the foreground hero logo again so the logo is guaranteed visible on home */
+/* HOME foreground logo (explicit, clear, single instance) */
+.hero-logo {
+  display: block !important;
+  position: relative !important;
+  z-index: 2 !important;
+  max-width: 42% !important;
+  height: auto !important;
+  object-fit: contain !important;
+  margin-inline: auto !important;
+  margin-top: clamp(0.25rem, 1.5vw, 0.75rem) !important;
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+/* On small screens, allow a bit wider for readability if desired */
+@media (max-width: 480px) {
+  .hero-logo {
+    max-width: 65%;
+  }
+}
+
+/* Fallback text styling if the image fails */
+.hero-fallback {
+  font-family: var(--font-display, 'ChunkFive', 'ChunkFive Regular', serif);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #1E3A5F;
+  font-size: clamp(2.4rem, 6vw, 3.2rem);
   text-align: center;
-  margin-top: 2.5rem;
 }
 
-.checkout-submit button {
-  padding: 0.9rem 2rem;
-  background-color: #111;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.2s ease;
+.home-hero-modern h1 {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-hero);
+  letter-spacing: 0.2px;
+  font-family: var(--font-display, 'ChunkFive', 'ChunkFive Regular', serif) !important;
+  color: #1E3A5F !important;
 }
 
-.checkout-submit button:hover {
-  background-color: #333;
+.home-hero-modern p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: var(--font-size-body);
 }
+
+.home-hero-modern .hero-watermark {
+  position: absolute;
+  right: -40px;
+  top: -30px;
+  width: clamp(180px, 28vw, 380px);
+  height: clamp(180px, 28vw, 380px);
+  background: conic-gradient(from 120deg at 50% 50%, rgba(26,91,255,0.12), rgba(163,255,18,0.12), transparent 60%);
+  opacity: 0.5;
+  pointer-events: none;
+  transform: rotate(-10deg);
+  filter: blur(30px) saturate(120%);
+  border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+  .home-hero-modern .hero-watermark {
+    right: -60px;
+    top: -40px;
+    opacity: 0.05;
+  }
+}
+
+/* Featured products on home */
+.featured-section {
+  margin-top: var(--space-8);
+}
+.featured-section .accent-animated {
+  background: linear-gradient(90deg, rgba(26,91,255,0.2), rgba(163,255,18,0.2), rgba(26,91,255,0.2));
+  background-size: 200% 100%;
+  animation: slide-accent 6s ease-in-out infinite;
+  height: 4px;
+  border-radius: 999px;
+  box-shadow: 0 6px 20px rgba(26,91,255,0.25), 0 6px 20px rgba(163,255,18,0.25);
+}
+@keyframes slide-accent {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+@media (max-width: 1024px) {
+  .featured-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .featured-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.featured-card {
+  background: var(--color-surface);
+  border: 1px solid rgba(31, 45, 61, 0.08);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-5);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.featured-card h3 {
+  margin: 0;
+  font-size: clamp(1.1rem, 0.6vw + 0.9rem, 1.35rem);
+}
+
+.featured-card p {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.featured-card .featured-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-top: var(--space-4);
+}
+
+/* Utilities */
+.muted { color: var(--color-muted); }
+.center { text-align: center; }
+.mt-6 { margin-top: var(--space-6); }
+.mt-8 { margin-top: var(--space-8); }
+.mb-6 { margin-bottom: var(--space-6); }
+.mb-8 { margin-bottom: var(--space-8); }
+.p-6 { padding: var(--space-6); }
+.hide { display: none !important; }
