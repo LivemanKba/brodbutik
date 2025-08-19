@@ -5,6 +5,9 @@
   "type": "commonjs",
   "main": "index.js",
   "license": "MIT",
+  "prisma": {
+    "schema": "prisma/schema.prod.prisma"
+  },
   "dependencies": {
     "@azure/functions": "^4.4.0",
     "@prisma/client": "^5.17.0"
@@ -14,9 +17,9 @@
   },
   "scripts": {
     "dev": "func start --javascript",
-    "postinstall": "prisma generate",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
-    "prisma:deploy": "prisma migrate deploy"
+    "postinstall": "prisma generate --schema prisma/schema.prod.prisma",
+    "prisma:generate": "prisma generate --schema prisma/schema.prod.prisma",
+    "prisma:migrate": "prisma migrate dev --schema prisma/schema.prod.prisma",
+    "prisma:deploy": "prisma migrate deploy --schema prisma/schema.prod.prisma"
   }
 }
