@@ -17,7 +17,7 @@
   },
   "scripts": {
     "dev": "func start --javascript",
-    "postinstall": "prisma generate --schema prisma/schema.prod.prisma",
+    "postinstall": "node -e \"const fs=require('fs');fs.mkdirSync('prisma',{recursive:true});if(fs.existsSync('prisma/schema.prod.prisma'))fs.copyFileSync('prisma/schema.prod.prisma','prisma/schema.prisma');process.exit(0)\" && prisma generate --schema prisma/schema.prisma",
     "prisma:generate": "prisma generate --schema prisma/schema.prod.prisma",
     "prisma:migrate": "prisma migrate dev --schema prisma/schema.prod.prisma",
     "prisma:deploy": "prisma migrate deploy --schema prisma/schema.prod.prisma"
