@@ -9,6 +9,12 @@
       "allowedRoles": ["anonymous"]
     }
   ],
+  "responseOverrides": {
+    "404": {
+      "rewrite": "/index.html",
+      "exclude": ["/api/*"]
+    }
+  },
   "globalHeaders": {
     "X-Frame-Options": "DENY",
     "X-Content-Type-Options": "nosniff",
