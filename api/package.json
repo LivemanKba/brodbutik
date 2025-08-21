@@ -17,7 +17,6 @@
   },
   "scripts": {
     "dev": "func start --javascript",
-    "postinstall": "node -e \"const fs=require('fs'),p=require('path');const here=process.cwd();const schemaDir=p.join(here,'prisma');const prod=p.join(here,'prisma','schema.prod.prisma');const def=p.join(here,'prisma','schema.prisma');try{fs.mkdirSync(schemaDir,{recursive:true});if(fs.existsSync(prod)){fs.copyFileSync(prod,def);}else{console.warn('WARNING: prisma/schema.prod.prisma not found at',prod);} }catch(e){console.error('Schema copy failed:',e)}\" && npx prisma generate --schema prisma/schema.prisma",
     "prisma:generate": "prisma generate --schema prisma/schema.prod.prisma",
     "prisma:migrate": "prisma migrate dev --schema prisma/schema.prod.prisma",
     "prisma:deploy": "prisma migrate deploy --schema prisma/schema.prod.prisma"
