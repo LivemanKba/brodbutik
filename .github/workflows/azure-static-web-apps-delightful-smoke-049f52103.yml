@@ -128,9 +128,10 @@ jobs:
           KUDU_HOST: ${{ steps.extract.outputs.scm }}
         run: |
           set -euo pipefail
-          echo "Deploying to https://$KUDU_HOST/api/zipdeploy"
+          url="https://${KUDU_HOST}/api/zipdeploy"
+          echo "Deploying to $url"
           http_code=$(curl -sS -u "$KUDU_USER:$KUDU_PASS" \
-            -X POST "https://$KUDU_HOST/api/zipdeploy" \
+            -X POST "$url" \
             --retry 3 --retry-all-errors \
             -H "Content-Type: application/zip" \
             --data-binary @functionapp.zip -o /dev/null -w "%{http_code}")
