@@ -102,11 +102,12 @@ jobs:
           zip -r ../functionapp.zip .
 
       - name: Deploy to Azure Function App (user-provided backend)
-        uses: Azure/functions-action@v1
+        uses: Azure/functions-action@v3
         with:
           app-name: ${{ secrets.AZURE_FUNCTIONAPP_NAME }}
           package: functionapp.zip
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+          scm-do-build-during-deployment: true
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
