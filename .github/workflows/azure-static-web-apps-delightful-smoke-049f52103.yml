@@ -77,7 +77,7 @@ jobs:
           test -f ./api/functions/ping/index.js || (echo "Missing ping index.js" && exit 1)
           echo "API artifacts present."
 
-      - name: Build and Deploy SWA (explicit locations)
+      - name: Build and Deploy SWA (frontend only)
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
@@ -85,7 +85,6 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "/"
-          api_location: "api"
           output_location: "build"
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
