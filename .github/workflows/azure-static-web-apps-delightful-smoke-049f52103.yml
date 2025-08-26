@@ -107,18 +107,28 @@ jobs:
         run: |
           set -euo pipefail
           xml='${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}'
-          # Extract user, password, and destination host from publish profile XML
+          # Extract credentials
           user=$(echo "$xml" | sed -n 's/.*userName="\([^"]*\)".*/\1/p' | head -n1)
           pass=$(echo "$xml" | sed -n 's/.*userPWD="\([^"]*\)".*/\1/p' | head -n1)
-          destHost=$(echo "$xml" | sed -n 's/.*destinationAppUrl="https:\/\/\([^"]*\)".*/\1/p' | head -n1)
-          if [[ -z "$user" || -z "$pass" || -z "$destHost" ]]; then
+          # Prefer ZipDeploy publishUrl which already points at the SCM host (may include :443)
+          zipPublish=$(echo "$xml" | sed -n 's/.*publishMethod="ZipDeploy" publishUrl="\([^"]*\)".*/\1/p' | head -n1)
+          hostPort="$zipPublish"
+          if [[ -z "$hostPort" ]]; then
+            hostPort=$(echo "$xml" | sed -n 's/.*publishMethod="MSDeploy" publishUrl="\([^"]*\)".*/\1/p' | head -n1)
+          fi
+          host=$(echo "$hostPort" | awk -F: '{print $1}')
+          # Ensure SCM subdomain exists and remove any accidental double dots
+          if [[ "$host" != *".scm."* ]]; then
+            host=$(echo "$host" | sed 's/^\([^\.]*\)\./\1.scm./')
+          fi
+          host=$(echo "$host" | sed 's/\.scm\./.scm./; s/\.\././g')
+          if [[ -z "$user" || -z "$pass" || -z "$host" ]]; then
             echo "Failed to parse publish profile"; exit 1
           fi
-          # Convert app host to SCM host (insert .scm.)
-          scmHost=$(echo "$destHost" | sed 's/^\([^\.]*\)\./\1./' | sed 's/azurewebsites\.net/.scm.azurewebsites.net/')
+          echo "Using SCM host: $host"
           echo "user=$user" >> $GITHUB_OUTPUT
           echo "pass=$pass" >> $GITHUB_OUTPUT
-          echo "scm=$scmHost" >> $GITHUB_OUTPUT
+          echo "scm=$host" >> $GITHUB_OUTPUT
 
       - name: Zip Deploy to Kudu (SCM) via curl
         shell: bash
@@ -128,6 +138,9 @@ jobs:
           KUDU_HOST: ${{ steps.extract.outputs.scm }}
         run: |
           set -euo pipefail
+          # Normalize any accidental double dots in host to avoid DNS failures
+          KUDU_HOST="$(echo "${KUDU_HOST}" | sed 's/\.\./\./g')"
+          echo "Using SCM host: ${KUDU_HOST}"
           url="https://${KUDU_HOST}/api/zipdeploy"
           echo "Deploying to $url"
           http_code=$(curl -sS -u "$KUDU_USER:$KUDU_PASS" \
